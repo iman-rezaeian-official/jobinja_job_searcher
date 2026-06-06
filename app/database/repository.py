@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 
-from database.db import SessionLocal
-from models.job_model import Job
+from app.database.db import SessionLocal
+from app.models.job_model import Job
 
 
 BATCH_SIZE = 100

@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from utils.helpers import clean_text
+from app.utils.helpers import clean_text
 
 
 def parse_jobs(html):

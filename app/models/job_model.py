@@ -7,7 +7,7 @@ from sqlalchemy import (
     DateTime,
 )
 
-from database.db import Base
+from app.database.db import Base
 
 
 class Job(Base):
