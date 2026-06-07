@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 
 from sqlalchemy import (
     Column,
@@ -7,7 +7,7 @@ from sqlalchemy import (
     DateTime,
 )
 
-from app.database.db import Base
+from app.database.engine import Base
 
 
 class Job(Base):
@@ -37,7 +37,7 @@ class Job(Base):
 
     scraped_at = Column(
         DateTime,
-        default=datetime.utcnow,
+        default=datetime.now(UTC),
         nullable=False
     )
     

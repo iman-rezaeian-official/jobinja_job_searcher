@@ -1,4 +1,4 @@
-from app.database.db import engine
+from app.database.engine import engine
 from app.models.job_model import Base
 
 
