@@ -1,59 +1,77 @@
+from config import JOBS_URL
 from app.scraper.fetcher import fetch_page
 from app.scraper.parser import parse_jobs
 
 from app.database.engine import SessionLocal
-from app.database.repository import (
-    exists,
-    insert_job,
-)
+from app.database.repository import exists, insert_job
+
+from app.scraper.auth import create_driver, manual_login_if_needed
 
 
-def sync_latest_jobs(driver):
+def sync_latest_jobs():
+    driver = None
 
-    new_jobs = 0
+    try:
+        driver = create_driver()
 
-    with SessionLocal() as session:
+        manual_login_if_needed(driver)
 
-        page = 1
+        new_jobs = 0
+        duplicate_count = 0
 
-        while True:
+        with SessionLocal() as session:
 
-            url = (
-                f"https://jobinja.ir/jobs?page={page}"
-            )
+            page = 1
 
-            html = fetch_page(
-                driver,
-                url,
-            )
+            while True:
 
-            duplicate_count = 0
-
-            for job in parse_jobs(html):
-
-                if exists(
-                    session,
-                    job["link"],
-                ):
-
-                    duplicate_count += 1
-
-                    if duplicate_count >= 20:
-                        session.commit()
-
-                        return new_jobs
-
-                    continue
-
-                duplicate_count = 0
-
-                insert_job(
-                    session,
-                    job,
+                url = (
+                    f"{JOBS_URL}?page={page}"
                 )
 
-                new_jobs += 1
+                html = fetch_page(
+                    driver,
+                    url,
+                )
+                jobs = parse_jobs(html)
+                if not jobs:
+                    print("No jobs found. Stopping!")
+                    break
+                for job in jobs:
 
-            session.commit()
+                    if exists(
+                        session,
+                        job["link"],
+                    ):
 
-            page += 1
+                        duplicate_count += 1
+
+                        if duplicate_count >= 20:
+                            session.commit()
+
+                            print(
+                                "Reached duplicate threshold. "
+                                "Stopping sync."
+                            )
+
+                            return new_jobs
+
+                        continue
+
+                    duplicate_count = 0
+
+                    insert_job(
+                        session,
+                        job,
+                    )
+
+                    new_jobs += 1
+
+                session.commit()
+
+                page += 1
+
+                return new_jobs
+    finally:
+        if driver:
+            driver.quit()

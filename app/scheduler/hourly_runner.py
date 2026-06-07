@@ -6,7 +6,6 @@ from app.services.sync_jobs import (
 
 
 def run_scheduler(
-    driver,
     poll_interval_seconds=3600,
 ):
 
@@ -14,9 +13,7 @@ def run_scheduler(
 
         try:
 
-            count = sync_latest_jobs(
-                driver
-            )
+            count = sync_latest_jobs()
 
             print(
                 f"Added {count} jobs"
