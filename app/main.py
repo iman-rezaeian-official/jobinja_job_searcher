@@ -1,6 +1,6 @@
 from app.database.engine import Base, engine
 
-from app.scheduler.hourly_runner import run_scheduler
+from app.scheduler.scheduler import run_scheduler
 
 
 def main():
@@ -9,7 +9,7 @@ def main():
     )
 
     run_scheduler(
-        poll_interval_seconds=120
+        minutes=10
     )
 
 

@@ -1,3 +1,4 @@
+import logging
 from config import JOBS_URL
 from app.scraper.fetcher import fetch_page
 from app.scraper.parser import parse_jobs
@@ -6,6 +7,9 @@ from app.database.engine import SessionLocal
 from app.database.repository import exists, insert_job
 
 from app.scraper.auth import create_driver, manual_login_if_needed
+
+
+logger = logging.getLogger(__name__)
 
 
 def sync_latest_jobs():
@@ -35,7 +39,7 @@ def sync_latest_jobs():
                 )
                 jobs = parse_jobs(html)
                 if not jobs:
-                    print("No jobs found. Stopping!")
+                    logger.info("No jobs found. Stopping!")
                     break
                 for job in jobs:
 
@@ -49,7 +53,7 @@ def sync_latest_jobs():
                         if duplicate_count >= 20:
                             session.commit()
 
-                            print(
+                            logger.info(
                                 "Reached duplicate threshold. "
                                 "Stopping sync."
                             )

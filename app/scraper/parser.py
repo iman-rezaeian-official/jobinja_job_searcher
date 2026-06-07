@@ -1,6 +1,9 @@
+import logging
 from bs4 import BeautifulSoup
 
 from app.utils.helpers import clean_text
+
+logger = logging.getLogger(__name__)
 
 
 def parse_jobs(html):
@@ -77,6 +80,6 @@ def parse_jobs(html):
             })
 
         except Exception as e:
-            print("Parse error:", e)
+            logger.exception("Parse error:", e)
 
     return jobs

@@ -3,3 +3,4 @@ requests
 sqlalchemy
 beautifulsoup4
 lxml
+APScheduler
