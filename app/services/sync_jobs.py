@@ -75,7 +75,7 @@ def sync_latest_jobs():
 
                 page += 1
 
-                return new_jobs
+            return new_jobs
     finally:
         if driver:
             driver.quit()
