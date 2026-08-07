@@ -1,9 +1,10 @@
-from sqlalchemy import or_, and_, not_
+from sqlalchemy import or_, and_, not_, exists
 from app.database.engine import SessionLocal
 from app.models.job_model import Job
+from app.models.job_analysis_model import JobAnalysis
 
 
-def get_filtered_jobs():
+def get_filtered_jobs(only_unanalyzed: bool = True):
     session = SessionLocal()
 
     try:
@@ -93,6 +94,12 @@ def get_filtered_jobs():
                 title_condition
             )
         )
+
+        # Only jobs that have never been analyzed
+        if only_unanalyzed:
+            query = query.filter(
+                ~exists().where(JobAnalysis.job_id == Job.id)
+            )
 
         results = query.all()
         return results
