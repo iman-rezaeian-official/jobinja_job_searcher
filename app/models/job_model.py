@@ -5,7 +5,9 @@ from sqlalchemy import (
     Integer,
     String,
     DateTime,
+
 )
+from sqlalchemy.orm import relationship
 
 from app.database.engine import Base
 
@@ -40,4 +42,5 @@ class Job(Base):
         default=datetime.now(UTC),
         nullable=False
     )
-    
+
+    analyses = relationship("JobAnalysis", back_populates="job", cascade="all, delete-orphan")
